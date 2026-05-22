@@ -3,15 +3,46 @@ import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+df = pd.read_csv(
+    "/Users/priya/Documents/Projects/Accident/accident.csv",
+    sep=";",             # comma-separated
+    engine="python",     # handle irregular lines
+    on_bad_lines="skip"  # skip bad/malformed lines
+)
 
-df = pd.read_csv('/Users/priya/Downloads/projects/Accident/accident.csv',dtype="object",sep=";")
-print(df.head())
+# Clean up column names
+df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
 
-df.columns = df.columns.str.lower().str.replace(' ', '_')
+#df = pd.read_csv('/Users/priya/Documents/Projects/Accident/accident.csv',sep=";")
+#print(df.head())
 
-df.to_csv('cleaned_file.csv', index=False)
+#df.columns = df.columns.str.lower().str.replace(' ', '_')
 
-print(df.columns)
+#df.to_csv('cleaned_file.csv', index=False)
+
+#print(df.columns)
+print(df.info())
+print("*************************************************************************")
+
+total_injuries =df['total_injuries']
+df['total_injuries'] = (df['number_of_pedestrians_injured'] + 
+                        df['number_of_cyclist_injured'] + 
+                        df['number_of_motorist_injured'])
+print(total_injuries)
+# Optional: create total deaths column as well
+total_deaths = df['total_deaths']
+df['total_deaths'] = (df['number_of_pedestrians_killed'] + 
+                      df['number_of_cyclist_killed'] + 
+                      df['number_of_motorist_killed'])
+
+print(total_deaths)
+print("*************************************************************************")
+
+features = ['borough', 'zip_code', 'vehicle_type_code_1', 'vehicle_type_code_2', 
+            'contributing_factor_vehicle_1', 'contributing_factor_vehicle_2']
+
+X = df[features]
+y = df['total_injuries']
 
 #1
 print(df['borough'].value_counts())
@@ -21,7 +52,7 @@ sns.set_style("dark")
 df['borough'].value_counts().plot(kind='bar', figsize=(8,5))
 plt.show()
 
-
+print("*****************************@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 #2a
 injured_cols = [
     'number_of_pedestrians_injured',
@@ -48,7 +79,7 @@ plt.ylabel("Number of injured persons")
 plt.xticks(rotation=15)
 plt.show()
 
-
+print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*******************************************")
 #2b
 killed_cols = [
     'number_of_pedestrians_killed',
@@ -79,6 +110,8 @@ plt.xlabel("Category")
 plt.ylabel("Number of Deaths")
 plt.xticks(rotation=15)
 plt.show()
+print("*****************@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@************************")
+
 
 #3
 vehicle_cols = ['vehicle_type_code_1', 'vehicle_type_code_2','vehicle_type_code_3', 'vehicle_type_code_4', 'vehicle_type_code_5']
